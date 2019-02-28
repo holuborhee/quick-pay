@@ -1,18 +1,60 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div class="d-flex min-vh-100">
+    <b-modal ref="viewModal" hide-footer @hidden="$router.push('/')">
+      <router-view/>
+    </b-modal>
+    <main class="w-75 d-flex flex-column justify-content-between">
+      <div id="nav">
+        <router-link to="/" >QuickPay</router-link>
+        <router-link to="/suppliers">View All Suppliers</router-link>
+        <router-link to="/suppliers/new">Add A Supplier</router-link>
+      </div>
+      <section>
+        <div class="d-flex justify-content-between">
+          <h3>List of Previous Tranfers</h3>
+          <router-link to="/transfers/new">Initiate A Tranfer</router-link>
+        </div>
+        <TransfersAll />
+      </section>
+    </main>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue';
+import TransfersAll from '@/components/TransfersAll.vue';
 
 export default {
   name: 'home',
   components: {
-    HelloWorld,
+    TransfersAll,
+  },
+  watch: {
+    $route(to) {
+      if (to.name !== 'home') this.$refs.viewModal.show();
+    },
   },
 };
 </script>
+
+<style>
+  main {
+    min-height: 75vh;
+    margin: auto;
+  }
+
+
+  #nav {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  #nav a {
+    font-weight: bold;
+    color: #2c3e50;
+  }
+
+  #nav a.router-link-exact-active {
+    color: #42b983;
+  }
+</style>
