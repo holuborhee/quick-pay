@@ -1,5 +1,14 @@
 <template>
-  <b-form @submit="onSubmit" @reset="onReset" v-if="show">
+  <b-form @submit.prevent="onSubmit">
+    <b-alert
+      :show="alert.countDown"
+      dismissible
+      :variant="alert.variant"
+      @dismissed="alert.countDown=0"
+      @dismiss-count-down="countDownChanged"
+    >
+      <p class="mb-0">{{alert.message}}</p>
+    </b-alert>
     <b-form-group>
       <b-form-input
         type="text"
@@ -20,8 +29,10 @@
         <b-form-select
           v-model="supplier.bank_code"
           :options="banks"
+          value-field="code"
+          text-field="name"
           required
-          placeholder="Select the Supplier's Bank" />
+        />
       </b-form-group>
 
       <b-form-group>
@@ -33,10 +44,13 @@
           placeholder="Enter the account number for the businesses" />
       </b-form-group>
 
-      <b-form-invalid-feedback v-if="!!supplier.account_number" :state="resolvedAccount">
+      <b-form-invalid-feedback
+        v-if="showFeedback"
+        :state="resolvedAccount"
+      >
         Cannot verify account number
       </b-form-invalid-feedback>
-      <b-form-valid-feedback v-if="!!supplier.account_number" :state="resolvedAccount">
+      <b-form-valid-feedback v-if="showFeedback" :state="resolvedAccount">
         {{accountName}}
       </b-form-valid-feedback>
     </b-form-group>
@@ -51,25 +65,61 @@
 </template>
 
 <script >
+import Api from '../Api';
+
 export default {
   data() {
     return {
+      alert: {
+        variant: 'danger',
+        message: null,
+        countDown: 0,
+      },
       supplier: {},
-      show: true,
-      banks: [],
+      banks: this.$banks,
       accountName: null,
+      resolvingAccount: false,
     };
+  },
+  watch: {
+    'supplier.account_number': function (val) { // eslint-disable-line func-names
+      this.accountName = null;
+      if (val.length > 9) {
+        this.resolveAccount();
+      }
+    },
   },
   computed: {
     resolvedAccount() {
-      return false;
+      return !!this.accountName;
+    },
+    showFeedback() {
+      return (
+        this.supplier.account_number && this.supplier.account_number.length > 9
+        && !this.resolvingAccount
+      );
     },
   },
   methods: {
-    onSubmit() {
-      return true;
+    countDownChanged(dismissCountDown) {
+      this.alert.countDown = dismissCountDown;
     },
-    onReset() {
+    async resolveAccount() {
+      this.resolvingAccount = true;
+      const response = await Api.fetch('GET',
+        `/resolve_account?accountNumber=${this.supplier.account_number}&bankCode=${this.supplier.bank_code}`);
+      if (response.isSuccessful) this.accountName = response.data.account_name;
+      this.resolvingAccount = false;
+    },
+    async onSubmit() {
+      const response = await Api.fetch('POST', '/suppliers', this.supplier);
+
+      this.alert = {
+        variant: response.isSuccessful ? 'success' : 'danger',
+        message: response.isSuccessful ? 'Supplier Details Successfully Added' : response.message,
+        countDown: 5,
+      };
+      if (response.isSuccessful) this.supplier = {};
       return true;
     },
   },

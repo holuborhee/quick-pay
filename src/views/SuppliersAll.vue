@@ -3,64 +3,48 @@
     <router-link to="/suppliers/new" >Add a new supplier</router-link>
     <b-table striped hover
       :fields="fields" :items="suppliers"
-      @row-clicked="handleTransferSelected"
+      @row-clicked="handleSupplierSelected"
     />
+
+    <b-row>
+      <b-col md="6" class="my-1">
+        <b-pagination
+          :total-rows="this.suppliers.length"
+          :per-page="perPage"
+          v-model="currentPage"
+          class="my-0"
+        />
+      </b-col>
+    </b-row>
   </div>
 </template>
 
 <script>
+import Api from '../Api';
+import EventBus from '../event-bus';
+
 export default {
   name: 'SuppliersAll',
   data() {
     return {
-      fields: ['recipient_code', 'name'],
-      suppliers: [
-        {
-          domain: 'test',
-          type: 'nuban',
-          currency: 'NGN',
-          name: 'Flesh',
-          details: {
-            account_number: '01000000000',
-            account_name: null,
-            bank_code: '044',
-            bank_name: 'Access Bank',
-          },
-          metadata: {
-            job: 'Eater',
-          },
-          recipient_code: 'RCP_2x5j67tnnw1t98k',
-          active: true,
-          id: 28,
-          createdAt: '2017-02-02T19:39:04.000Z',
-          updatedAt: '2017-02-02T19:39:04.000Z',
-        },
-        {
-          integration: 100073,
-          domain: 'test',
-          type: 'nuban',
-          currency: 'NGN',
-          name: 'Flesh',
-          details: {
-            account_number: '0100000010',
-            account_name: null,
-            bank_code: '044',
-            bank_name: 'Access Bank',
-          },
-          metadata: {},
-          recipient_code: 'RCP_1i2k27vk4suemug',
-          active: true,
-          id: 27,
-          createdAt: '2017-02-02T19:35:33.000Z',
-          updatedAt: '2017-02-02T19:35:33.000Z',
-        },
-      ],
+      fields: ['name', 'description'],
+      suppliers: [],
+      currentPage: 1,
+      perPage: 10,
     };
   },
   methods: {
-    handleTransferSelected(item) {
+    handleSupplierSelected(item) {
       this.$router.push(`/suppliers/${item.id}`);
     },
+    async getSuppliers() {
+      const response = await Api.fetch('GET', `/suppliers?perPage=${this.perPage}&page=${this.currentPage}`);
+      this.suppliers = response.data;
+      EventBus.$emit('ALL_SUPPLIERS', this.suppliers);
+    },
+  },
+  async mounted() {
+    await this.getSuppliers();
   },
 };
 </script>

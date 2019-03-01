@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex min-vh-100">
     <b-modal ref="viewModal" hide-footer @hidden="$router.push('/')">
-      <router-view/>
+      <router-view :suppliers="currentSuppliers" />
     </b-modal>
     <main class="w-75 d-flex flex-column justify-content-between">
       <div id="nav">
@@ -23,16 +23,28 @@
 <script>
 // @ is an alias to /src
 import TransfersAll from '@/components/TransfersAll.vue';
+import EventBus from '../event-bus';
 
 export default {
   name: 'home',
   components: {
     TransfersAll,
   },
+  data() {
+    return {
+      currentSuppliers: [],
+    };
+  },
   watch: {
     $route(to) {
       if (to.name !== 'home') this.$refs.viewModal.show();
     },
+  },
+  mounted() {
+    EventBus.$on('ALL_SUPPLIERS', (payLoad) => {
+      console.log(payLoad);
+      this.currentSuppliers = payLoad;
+    });
   },
 };
 </script>
