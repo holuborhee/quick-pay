@@ -1,5 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import serveStatic from 'serve-static';
+import path from 'path';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import GeneralController from './server/controllers/GeneralController';
@@ -28,6 +30,8 @@ app.use(cors({
 
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+
+app.use(serveStatic(path.join(__dirname, 'dist')));
 
 app.get('/banks', GeneralController.getAllBanks);
 app.get('/resolve_account', GeneralController.resolveAccountNumber);

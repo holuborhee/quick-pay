@@ -7,7 +7,8 @@
     "start": "nodemon server.js --exec babel-node --presets babel-preset-env",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "test:unit": "vue-cli-service test:unit"
+    "test:unit": "vue-cli-service test:unit",
+    "postinstall": "yarn run build"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -21,6 +22,7 @@
     "cors": "^2.8.5",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
+    "serve-static": "^1.13.2",
     "vue": "^2.6.6",
     "vue-router": "^3.0.1"
   },
