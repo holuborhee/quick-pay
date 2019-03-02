@@ -24,7 +24,7 @@ export default {
   },
   methods: {
     handleTransferSelected(item) {
-      this.$router.push(`/transfers/${item.first_name}`);
+      this.$router.push(`/transfers/${item.id}`);
     },
     async getPreviousTranfers() {
       const response = await Api.fetch('GET', '/transfers');
