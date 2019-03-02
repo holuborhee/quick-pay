@@ -21,7 +21,7 @@
         placeholder="Enter amount to transfer"
       />
 
-      <b-button variant="danger" @click.native="removeRecipient">X</b-button>
+      <b-button variant="danger" @click="removeRecipient">X</b-button>
     </b-form>
     <p v-if="Object.keys(selectedSupplierBank).length > 0" class="text-success">
       {{selectedSupplierBank.bank_name}},
