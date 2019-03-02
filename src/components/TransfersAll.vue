@@ -1,34 +1,48 @@
 <template>
   <div>
-    <b-table striped hover :items="transfers" @row-clicked="handleTransferSelected" />
+    <div id="empty-transfer" v-if="transfers.length < 1">
+      <h2 class="text-warning">You have not made any transfer</h2>
+      <router-link to="/transfers/new">Initiate A Transfer</router-link>
+    </div>
+    <b-table v-else striped hover
+      :fields="fields" :items="transfers"
+      @row-clicked="handleTransferSelected"
+    />
   </div>
 </template>
 
 <script>
+import Api from '@/Api';
+
 export default {
   name: 'TransfersAll',
   data() {
     return {
-      transfers: [
-        {
-          isActive: true, age: 40, first_name: 'Dickerson', last_name: 'Macdonald',
-        },
-        {
-          isActive: false, age: 21, first_name: 'Larsen', last_name: 'Shaw',
-        },
-        {
-          isActive: false, age: 89, first_name: 'Geneva', last_name: 'Wilson',
-        },
-        {
-          isActive: true, age: 38, first_name: 'Jami', last_name: 'Carney',
-        },
-      ],
+      fields: ['id', 'amount', 'createdAt', 'currency'],
+      transfers: [],
     };
   },
   methods: {
     handleTransferSelected(item) {
       this.$router.push(`/transfers/${item.first_name}`);
     },
+    async getPreviousTranfers() {
+      const response = await Api.fetch('GET', '/transfers');
+      this.transfers = response.data;
+    },
+  },
+  mounted() {
+    this.getPreviousTranfers();
   },
 };
 </script>
+
+<style>
+  #empty-transfer {
+    min-height: 250px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+</style>

@@ -5,7 +5,7 @@
     </b-modal>
     <main class="w-75 d-flex flex-column justify-content-between">
       <div id="nav">
-        <router-link to="/" >QuickPay</router-link>
+        <router-link id="logo" to="/" >QuickPay</router-link>
         <router-link to="/suppliers">View All Suppliers</router-link>
         <router-link to="/suppliers/new">Add A Supplier</router-link>
       </div>
@@ -23,7 +23,7 @@
 <script>
 // @ is an alias to /src
 import TransfersAll from '@/components/TransfersAll.vue';
-import EventBus from '../event-bus';
+import EventBus from '@/event-bus';
 
 export default {
   name: 'home',
@@ -33,6 +33,7 @@ export default {
   data() {
     return {
       currentSuppliers: [],
+      transfers: [],
     };
   },
   watch: {
@@ -59,6 +60,11 @@ export default {
   #nav {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+  }
+
+  #nav #logo {
+    font-size: 3rem;
   }
 
   #nav a {
