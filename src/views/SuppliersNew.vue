@@ -88,6 +88,12 @@ export default {
         this.resolveAccount();
       }
     },
+    'supplier.bank_code': function () { // eslint-disable-line func-names
+      this.accountName = null;
+      if (this.supplier.account_number) {
+        this.resolveAccount();
+      }
+    },
   },
   computed: {
     resolvedAccount() {
