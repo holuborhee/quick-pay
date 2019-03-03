@@ -83,6 +83,9 @@ export default {
     async doTransfer(card) {
       const transfers = this.transfers.slice(0);
       transfers.pop();
+      transfers.forEach((transfer) => {
+        transfer.amount *= 100; // eslint-disable-line no-param-reassign
+      });
       const payload = { card, transfers };
       const response = await Api.fetch('POST', '/transfers', payload);
       this.toPay = false;

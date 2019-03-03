@@ -28,7 +28,12 @@ export default {
     },
     async getPreviousTranfers() {
       const response = await Api.fetch('GET', '/transfers');
-      this.transfers = response.data;
+      const transfers = response.data;
+      transfers.forEach((transfer) => {
+        transfer.amount /= 100; // eslint-disable-line no-param-reassign
+      });
+
+      this.transfers = transfers;
     },
   },
   mounted() {
