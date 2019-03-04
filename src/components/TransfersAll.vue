@@ -28,12 +28,12 @@ export default {
     },
     async getPreviousTranfers() {
       const response = await Api.fetch('GET', '/transfers');
-      const transfers = response.data;
-      transfers.forEach((transfer) => {
-        transfer.amount /= 100; // eslint-disable-line no-param-reassign
-      });
+      /*
+        Amount should be converted back to naira here
+        in a normal scenario
+      */
 
-      this.transfers = transfers;
+      this.transfers = response.data;
     },
   },
   mounted() {

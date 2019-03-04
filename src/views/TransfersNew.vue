@@ -1,5 +1,8 @@
 <template>
-  <TransfersCharge v-if="toPay" :amount="totalAmount" @charge="doTransfer" />
+  <TransfersCharge v-if="toPay"
+    :amount="totalAmount"
+    @charge="doTransfer"
+  />
   <b-form @submit.prevent="goToPay" v-else>
     <b-alert
       :show="alert.countDown"
@@ -83,9 +86,13 @@ export default {
     async doTransfer(card) {
       const transfers = this.transfers.slice(0);
       transfers.pop();
-      transfers.forEach((transfer) => {
-        transfer.amount *= 100; // eslint-disable-line no-param-reassign
-      });
+
+      /*
+       Amount of tranfers should be converted to Kobo here,
+       but I decided to leave that out of the current implementation
+       Coverting to Kobo will give insufficient balance
+      */
+
       const payload = { card, transfers };
       const response = await Api.fetch('POST', '/transfers', payload);
       this.toPay = false;
@@ -96,7 +103,7 @@ export default {
 
         this.alert = {
           variant: 'success',
-          message: 'All Tranfer Successful',
+          message: 'All Transfers Successful',
           countDown: 5,
         };
       } else {
