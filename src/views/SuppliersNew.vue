@@ -43,7 +43,7 @@
           :disabled="!supplier.bank_code"
           placeholder="Enter the account number for the businesses" />
       </b-form-group>
-
+      <p class="my-0 text-primary" v-if="resolvingAccount">Getting account info...</p>
       <b-form-invalid-feedback
         v-if="showFeedback"
         :state="resolvedAccount"
@@ -82,17 +82,14 @@ export default {
     };
   },
   watch: {
-    'supplier.account_number': function (val) { // eslint-disable-line func-names
-      this.accountName = null;
-      if (val.length > 9) {
-        this.resolveAccount();
-      }
-    },
-    'supplier.bank_code': function () { // eslint-disable-line func-names
-      this.accountName = null;
-      if (this.supplier.account_number) {
-        this.resolveAccount();
-      }
+    supplier: {
+      handler(supplier) {
+        this.accountName = null;
+        if (supplier.account_number && supplier.account_number.length > 9) {
+          this.resolveAccount();
+        }
+      },
+      deep: true,
     },
   },
   computed: {
